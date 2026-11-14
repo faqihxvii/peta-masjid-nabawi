@@ -101,7 +101,9 @@
     drag: null,
     pinch: null,
     tap: null,
-    lastTap: null
+    lastTap: null,
+    lastPointerType: null,
+    panMode: false
   };
 
   const $ = (selector) => document.querySelector(selector);
@@ -119,6 +121,7 @@
     markers: $('#markers'),
     mapStatus: $('#map-status'),
     mapCount: $('#map-count'),
+    panToggle: document.querySelector('[data-map-action="pan-mode"]'),
     filters: $('#category-filters'),
     list: $('#location-list'),
     sheet: $('#point-sheet'),
@@ -855,6 +858,11 @@
 
     dom.mapStage.style.transform = `translate(-50%, -50%) translate(${view.tx}px, ${view.ty}px) scale(${view.scale})`;
     dom.mapStage.style.setProperty('--marker-scale', String(1 / view.scale));
+    dom.mapViewport.classList.toggle('is-zoomed', view.scale > 1.001);
+
+    if (state.panMode && view.scale <= 1.001) {
+      setPanMode(false);
+    }
 
     if (animate) {
       dom.mapStage.classList.add('is-animating');
@@ -896,10 +904,38 @@
   }
 
   function resetMap(animate) {
+    setPanMode(false);
     state.view.scale = 1;
     state.view.tx = 0;
     state.view.ty = 0;
     applyTransform(animate);
+  }
+
+  function setPanMode(enabled) {
+    const next = Boolean(enabled) && state.view.ready;
+
+    if (next && state.view.scale <= 1.001) {
+      zoomAt(0, 0, 1.8, true);
+    }
+
+    state.panMode = next;
+    dom.mapViewport.classList.toggle('is-pan-mode', state.panMode);
+
+    if (dom.panToggle) {
+      dom.panToggle.classList.toggle('is-active', state.panMode);
+      dom.panToggle.setAttribute('aria-pressed', String(state.panMode));
+      dom.panToggle.setAttribute(
+        'aria-label',
+        state.panMode ? 'Matikan geser peta satu jari' : 'Aktifkan geser peta dengan satu jari'
+      );
+    }
+
+    dom.mapViewport.setAttribute(
+      'aria-label',
+      state.panMode
+        ? 'Denah Masjid Nabawi. Mode geser satu jari aktif: geser untuk menjelajah peta. Ketuk tombol geser lagi agar satu jari kembali menggulir halaman.'
+        : 'Denah Masjid Nabawi. Satu jari menggulir halaman. Cubit atau gunakan tombol plus dan minus untuk memperbesar. Geser dengan dua jari, atau ketuk tombol geser untuk menggeser peta dengan satu jari.'
+    );
   }
 
   function focusPoint(id, shouldScroll) {
@@ -956,6 +992,11 @@
 
       const action = button.dataset.mapAction;
 
+      if (action === 'pan-mode') {
+        setPanMode(!state.panMode);
+        return;
+      }
+
       if (action === 'zoom-in') {
         zoomAt(0, 0, 1.35, true);
       } else if (action === 'zoom-out') {
@@ -1005,7 +1046,9 @@
       return;
     }
 
-    if (event.target.closest('button, a, input')) {
+    const startedOnControl = Boolean(event.target.closest('button, a, input'));
+
+    if (event.pointerType === 'mouse' && startedOnControl) {
       return;
     }
 
@@ -1013,33 +1056,56 @@
       return;
     }
 
-    event.preventDefault();
-    state.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    const isTouch = event.pointerType === 'touch';
 
-    if (dom.mapViewport.setPointerCapture) {
-      try {
-        dom.mapViewport.setPointerCapture(event.pointerId);
-      } catch (error) {
-        /* Pointer capture tidak selalu tersedia; gestur tetap berjalan. */
-      }
-    }
+    state.lastPointerType = event.pointerType;
+
+    state.pointers.set(event.pointerId, {
+      x: event.clientX,
+      y: event.clientY,
+      type: event.pointerType || 'mouse'
+    });
 
     if (state.pointers.size === 1) {
+      state.pinch = null;
+      state.tap = startedOnControl
+        ? null
+        : {
+            pointerId: event.pointerId,
+            x: event.clientX,
+            y: event.clientY,
+            time: performance.now(),
+            moved: false
+          };
+
+      // Satu jari di layar sentuh hanya menggeser peta bila mode geser
+      // diaktifkan lewat tombol. Tanpa preventDefault, browser tetap bisa
+      // menggulir halaman secara vertikal di atas peta.
+      if (isTouch && !state.panMode) {
+        state.drag = null;
+        return;
+      }
+
+      if (startedOnControl) {
+        state.drag = null;
+        return;
+      }
+
+      event.preventDefault();
       state.drag = {
+        pointerId: event.pointerId,
         startX: event.clientX,
         startY: event.clientY,
         startTx: state.view.tx,
         startTy: state.view.ty,
         moved: false
       };
-      state.pinch = null;
-      state.tap = {
-        x: event.clientX,
-        y: event.clientY,
-        time: performance.now()
-      };
+      capturePointer(event.pointerId);
       dom.mapViewport.classList.add('is-panning');
-    } else if (state.pointers.size === 2) {
+      return;
+    }
+
+    if (state.pointers.size === 2) {
       const points = Array.from(state.pointers.values());
       const rect = dom.mapViewport.getBoundingClientRect();
       const middle = midpoint(points[0], points[1]);
@@ -1054,6 +1120,22 @@
         startMidX: middle.x - rect.left - rect.width / 2,
         startMidY: middle.y - rect.top - rect.height / 2
       };
+
+      event.preventDefault();
+      state.pointers.forEach((pointer, pointerId) => capturePointer(pointerId));
+      dom.mapViewport.classList.add('is-panning');
+    }
+  }
+
+  function capturePointer(pointerId) {
+    if (!dom.mapViewport.setPointerCapture) {
+      return;
+    }
+
+    try {
+      dom.mapViewport.setPointerCapture(pointerId);
+    } catch (error) {
+      /* Pointer capture tidak selalu tersedia; gestur tetap berjalan. */
     }
   }
 
@@ -1062,7 +1144,17 @@
       return;
     }
 
-    state.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    state.pointers.set(event.pointerId, {
+      x: event.clientX,
+      y: event.clientY,
+      type: event.pointerType || 'mouse'
+    });
+
+    if (state.tap && state.tap.pointerId === event.pointerId) {
+      if (Math.hypot(event.clientX - state.tap.x, event.clientY - state.tap.y) > 8) {
+        state.tap.moved = true;
+      }
+    }
 
     if (state.pointers.size >= 2 && state.pinch) {
       const points = Array.from(state.pointers.values()).slice(0, 2);
@@ -1084,7 +1176,7 @@
       return;
     }
 
-    if (state.drag && state.pointers.size === 1) {
+    if (state.drag && state.drag.pointerId === event.pointerId && state.pointers.size === 1) {
       const deltaX = event.clientX - state.drag.startX;
       const deltaY = event.clientY - state.drag.startY;
 
@@ -1107,8 +1199,10 @@
     }
 
     const wasSingle = state.pointers.size === 1;
-    const dragMoved = state.drag ? state.drag.moved : true;
+    const dragMoved = state.drag ? state.drag.moved : false;
     const tap = state.tap;
+    const isTapPointer = Boolean(tap && tap.pointerId === event.pointerId);
+    const wasCanceled = event.type === 'pointercancel';
 
     state.pointers.delete(event.pointerId);
 
@@ -1118,22 +1212,35 @@
       state.tap = null;
       dom.mapViewport.classList.remove('is-panning');
 
-      if (wasSingle && !dragMoved && tap && event.pointerType !== 'mouse') {
+      if (
+        wasSingle &&
+        isTapPointer &&
+        !dragMoved &&
+        !tap.moved &&
+        !wasCanceled &&
+        event.pointerType !== 'mouse'
+      ) {
         handleTap(tap, event);
       }
       return;
     }
 
     if (state.pointers.size === 1) {
-      const remaining = Array.from(state.pointers.values())[0];
+      const [remainingId, remaining] = Array.from(state.pointers.entries())[0];
       state.pinch = null;
-      state.drag = {
-        startX: remaining.x,
-        startY: remaining.y,
-        startTx: state.view.tx,
-        startTy: state.view.ty,
-        moved: true
-      };
+      state.tap = null;
+
+      state.drag =
+        remaining.type === 'mouse' || state.panMode
+          ? {
+              pointerId: remainingId,
+              startX: remaining.x,
+              startY: remaining.y,
+              startTx: state.view.tx,
+              startTy: state.view.ty,
+              moved: true
+            }
+          : null;
     }
   }
 
@@ -1143,12 +1250,12 @@
     if (
       state.lastTap &&
       now - state.lastTap.time < 340 &&
-      Math.hypot(event.clientX - state.lastTap.x, event.clientY - state.lastTap.y) < 32
+      Math.hypot(tap.x - state.lastTap.x, tap.y - state.lastTap.y) < 32
     ) {
       state.lastTap = null;
       const rect = dom.mapViewport.getBoundingClientRect();
-      const px = event.clientX - rect.left - rect.width / 2;
-      const py = event.clientY - rect.top - rect.height / 2;
+      const px = tap.x - rect.left - rect.width / 2;
+      const py = tap.y - rect.top - rect.height / 2;
       const factor = state.view.scale > 1.5 ? 1 / 1.8 : 1.8;
       zoomAt(px, py, factor, true);
       return;
@@ -1173,7 +1280,7 @@
   }
 
   function onDoubleClick(event) {
-    if (event.target.closest('button, a, input')) {
+    if (state.lastPointerType === 'touch' || event.target.closest('button, a, input')) {
       return;
     }
 
