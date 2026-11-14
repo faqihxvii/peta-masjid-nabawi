@@ -623,9 +623,20 @@ h2 {
   max-height: 760px;
   overflow: hidden;
   background: var(--sand);
+  cursor: default;
+  touch-action: pan-y;
+  outline: none;
+}
+
+/* Geser satu jari hanya aktif setelah pengguna mengetuk tombol tangan.
+   Tanpa mode ini, swipe vertikal diteruskan ke halaman. */
+.map-viewport.is-pan-mode {
   cursor: grab;
   touch-action: none;
-  outline: none;
+}
+
+.map-viewport.is-zoomed {
+  cursor: grab;
 }
 
 .map-viewport:focus-visible {
@@ -816,6 +827,13 @@ h2 {
   border-color: var(--green);
   background: var(--white);
   color: var(--green);
+}
+
+.map-controls button.is-active,
+.map-controls button[aria-pressed="true"] {
+  border-color: var(--green);
+  background: var(--green);
+  color: var(--paper);
 }
 
 .map-controls .icon {
