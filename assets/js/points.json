@@ -1,0 +1,190 @@
+[
+  {
+    "id": "kubah",
+    "nama": "Kubah Hijau & Masjid Lama",
+    "x": 39,
+    "y": 42,
+    "kategori": "masjid-lama",
+    "foto": ["kubah-hijau.jpg", "raudhah.jpg"],
+    "deskripsi": "Kubah Hijau menandai makam Rasulullah. Di bawahnya, antara mimbar dan rumah beliau, adalah Raudhah.",
+    "tips": "",
+    "gerbang": ""
+  },
+  {
+    "id": "pintu-raudhah",
+    "nama": "Pintu Masuk Raudhah",
+    "x": 29.5,
+    "y": 39.5,
+    "kategori": "masjid-lama",
+    "foto": ["raudhah.jpg"],
+    "deskripsi": "Pintu masuk Raudhah untuk laki-laki dan perempuan, area gerbang 40–42.",
+    "tips": "Masuk Raudhah perlu izin (tasreh) lewat aplikasi Nusuk dan sesuai jadwal.",
+    "gerbang": "40–42"
+  },
+  {
+    "id": "bab-as-salam",
+    "nama": "Bab As-Salam (Pintu Salam)",
+    "x": 38,
+    "y": 24.5,
+    "kategori": "gerbang",
+    "foto": ["bab-as-salam.jpg"],
+    "deskripsi": "Pintu 1. Jalur mengucap salam kepada Rasulullah: masuk dari sini, keluar lewat sisi Baqi'.",
+    "tips": "Jalur satu arah, ikuti arus jamaah.",
+    "gerbang": "1"
+  },
+  {
+    "id": "bab-jibril",
+    "nama": "Bab Jibril",
+    "x": 15.5,
+    "y": 37,
+    "kategori": "gerbang",
+    "foto": ["bab-jibril.jpg"],
+    "deskripsi": "Pintu di sisi timur Masjid Lama, dekat Al-Baqi'. Dinamai dari Jibril yang pernah turun di sini.",
+    "tips": "",
+    "gerbang": "Pintu Masjid Lama sisi timur"
+  },
+  {
+    "id": "al-baqi",
+    "nama": "Pemakaman Al-Baqi'",
+    "x": 8,
+    "y": 32,
+    "kategori": "sekitar",
+    "foto": ["al-baqi.jpg"],
+    "deskripsi": "Pemakaman para sahabat dan keluarga Nabi, di sisi timur masjid.",
+    "tips": "Ziarah biasanya pagi setelah Subuh; perempuan tidak masuk area pemakaman.",
+    "gerbang": ""
+  },
+  {
+    "id": "al-ghamama",
+    "nama": "Masjid Al-Ghamama",
+    "x": 76,
+    "y": 12,
+    "kategori": "sekitar",
+    "foto": ["masjid-al-ghamama.jpg"],
+    "deskripsi": "Masjid kecil tempat Rasulullah pernah salat Istisqa. Di seberang Jalan As-Salam, barat masjid.",
+    "tips": "",
+    "gerbang": ""
+  },
+  {
+    "id": "abu-bakar",
+    "nama": "Masjid Abu Bakar Ash-Shiddiq",
+    "x": 81.5,
+    "y": 20.5,
+    "kategori": "sekitar",
+    "foto": ["masjid-abu-bakar.jpg"],
+    "deskripsi": "Di sebelah Masjid Al-Ghamama, di lokasi rumah Abu Bakar.",
+    "tips": "",
+    "gerbang": ""
+  },
+  {
+    "id": "payung-selatan",
+    "nama": "Pelataran Selatan",
+    "x": 47,
+    "y": 22,
+    "kategori": "pelataran",
+    "foto": ["payung-courtyard.jpg"],
+    "deskripsi": "Pelataran dengan payung raksasa (buka siang, tutup malam).",
+    "tips": "Perhatikan nomor pintu masuk agar mudah kembali ke titik yang sama.",
+    "gerbang": "201–212, 301–312"
+  },
+  {
+    "id": "payung-utara",
+    "nama": "Pelataran Utara",
+    "x": 39,
+    "y": 84,
+    "kategori": "pelataran",
+    "foto": ["payung-courtyard.jpg"],
+    "deskripsi": "Sisi utara, menghadap King Fahd Road.",
+    "tips": "",
+    "gerbang": "219–230, 328–343"
+  },
+  {
+    "id": "payung-timur",
+    "nama": "Pelataran Timur",
+    "x": 10.5,
+    "y": 70,
+    "kategori": "pelataran",
+    "foto": ["payung-courtyard.jpg"],
+    "deskripsi": "Sisi timur, dekat Al-Baqi' dan King Abdulaziz Road.",
+    "tips": "",
+    "gerbang": "231–236, 344–354"
+  },
+  {
+    "id": "payung-barat",
+    "nama": "Pelataran Barat",
+    "x": 64.5,
+    "y": 54,
+    "kategori": "pelataran",
+    "foto": ["payung-courtyard.jpg"],
+    "deskripsi": "Sisi barat, dekat Jalan As-Salam.",
+    "tips": "",
+    "gerbang": "213–218, 314–327"
+  },
+  {
+    "id": "wanita-timur",
+    "nama": "Area Wanita — Timur",
+    "x": 25,
+    "y": 65,
+    "kategori": "wanita",
+    "foto": ["area-wanita.jpg"],
+    "deskripsi": "Area salat wanita sisi timur.",
+    "tips": "Pintu masuk wanita gerbang 32 (masjid lama) dan 25–27.",
+    "gerbang": "25–27, 32"
+  },
+  {
+    "id": "wanita-barat",
+    "nama": "Area Wanita — Barat",
+    "x": 56.5,
+    "y": 65,
+    "kategori": "wanita",
+    "foto": ["area-wanita.jpg"],
+    "deskripsi": "Area salat wanita sisi barat.",
+    "tips": "Pintu masuk gerbang 13–17.",
+    "gerbang": "13–17"
+  },
+  {
+    "id": "zamzam",
+    "nama": "Tempat Isi Air Zamzam",
+    "x": 67.5,
+    "y": 15.5,
+    "kategori": "fasilitas",
+    "foto": ["zamzam.jpg"],
+    "deskripsi": "Titik pengisian Zamzam di pelataran selatan (dekat gerbang 309).",
+    "tips": "Bawa botol kecil. Zamzam kemasan besar untuk dibawa pulang dibagikan lewat jalur resmi, jangan masukkan ke koper.",
+    "gerbang": "309"
+  },
+  {
+    "id": "perpustakaan",
+    "nama": "Perpustakaan Masjid Nabawi",
+    "x": 58.5,
+    "y": 62,
+    "kategori": "fasilitas",
+    "foto": ["perpustakaan.jpg"],
+    "deskripsi": "Perpustakaan di sisi barat masjid (dekat gerbang 12–14).",
+    "tips": "Foto lorong ini belum terverifikasi penuh, mohon cocokkan di lokasi.",
+    "gerbang": "12–14",
+    "peringatan": true
+  },
+  {
+    "id": "saqifah",
+    "nama": "Saqifah Bani Sa'idah",
+    "x": 82,
+    "y": 76,
+    "kategori": "sekitar",
+    "foto": ["saqifah.jpg"],
+    "deskripsi": "Taman tempat musyawarah pemilihan khalifah pertama. Arah barat laut dari masjid (sesuai kompas pada denah).",
+    "tips": "",
+    "gerbang": ""
+  },
+  {
+    "id": "kawasan-hotel",
+    "nama": "Kawasan Hotel — Jalan As-Salam",
+    "x": 71,
+    "y": 33,
+    "kategori": "sekitar",
+    "foto": ["kayan-hotel.jpg"],
+    "deskripsi": "Kawasan hotel di Jalan As-Salam sisi barat, beberapa menit jalan kaki dari masjid. Titik ini penanda arah kawasan, bukan lokasi persis satu hotel. Foto hanya contoh fasad hotel di kawasan itu.",
+    "tips": "Catat nomor gerbang terdekat hotelmu sebagai patokan jalan pulang.",
+    "gerbang": ""
+  }
+]
